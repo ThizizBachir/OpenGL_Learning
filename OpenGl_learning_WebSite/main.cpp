@@ -3,6 +3,9 @@
 #include "GLFW\glfw3.h"
 #include "Shader.h"
 #include "stb_image.h"
+#include <glm/glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 float x=0.0f;
 
@@ -11,7 +14,9 @@ void processInput(GLFWwindow* window);
 
 
 int main() {
-
+    //glm::mat4 trans = glm::mat4(1.0f);
+    //trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+    //trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -81,51 +86,50 @@ int main() {
 
     
     //generating textures
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    unsigned int texture_1,texture_2;
+    glGenTextures(1, &texture_1);
+    glBindTexture(GL_TEXTURE_2D, texture_1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //texture loading
     int width, height, nrchannels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load("container.jpg", &width, &height, &nrchannels, 0);
-    std::cout << "widhth=" << width << " height=" << height << "\n";
+    //std::cout << "widhth=" << width << " height=" << height << "\n";
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else { std::cout << "ERROR::Texture::Failed to load texture"; } 
-    // set the texture wrapping/filtering options (on the currently bound texture object)
 
-    unsigned int texture2;
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
+    stbi_image_free(data);
+    
+    glGenTextures(1, &texture_2);
+    glBindTexture(GL_TEXTURE_2D, texture_2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     //texture loading
-    unsigned char* data2 = stbi_load("awesomeface.png", &width, &height, &nrchannels, 0);
-    std::cout << "widhth=" << width << " height=" << height << "\n";
-    if (data2) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+    unsigned char* data_2 = stbi_load("awesomeface.png", &width, &height, &nrchannels, 0);
+    //std::cout << "widhth=" << width << " height=" << height << "\n";
+    if (data_2) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data_2);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else { std::cout << "ERROR::Texture::Failed to load texture"; }
 
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    stbi_image_free(data);
-    stbi_image_free(data2);
-
-    
-    
-   
+    stbi_image_free(data_2);
 
     // making the shader program
 
-    //unsigned int sh = createShader(vertexShaderSource, fragmentShaderSource);
-    Shader sh("vertexShader.vs", "fragmentShader.frag");
+    Shader sh("vertexShader.vert", "fragmentShader.frag");
 
     // @RENDRING_Engine
-
+    glm::mat4 trans = glm::mat4(1.0f);
     while (!glfwWindowShouldClose(window))
     {
         // input
@@ -138,13 +142,21 @@ int main() {
 
         // be sure to activate the shader
         sh.use();
-        glUniform1i(glGetUniformLocation(sh.ID, "Texture_1"), 0); // set it manually
+        sh.setInt("Texture_1", 0); 
         sh.setInt("Texture_2", 1);
-        //glUseProgram(sh);
+        unsigned int transformloc = glGetUniformLocation(sh.ID, "transform");
+        trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, 10 * (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans = glm::scale(trans, glm::vec3(1/ (float)glfwGetTime(), 1 / (float)glfwGetTime(), 1 / (float)glfwGetTime()));
+        glUniformMatrix4fv(transformloc, 1, GL_FALSE, glm::value_ptr(trans));
+        
+        
+
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, texture_1);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
+        glBindTexture(GL_TEXTURE_2D, texture_2);
         // now render the triangle
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,0);
@@ -169,10 +181,10 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {/*definesomrthing to do when pressing X*/
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {/*definesomething to do when pressing X*/
         x += 0.01f;
     }
-    if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {/*definesomrthing to do when pressing Y*/
+    if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS) {/*definesomething to do when pressing Y*/
         x = 0.0f;
     }
 }

@@ -43,7 +43,7 @@
     <None Include="fragmentShader.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="vertexShader.vs">
+    <None Include="vertexShader.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

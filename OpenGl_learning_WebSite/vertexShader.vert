@@ -5,9 +5,10 @@ layout (location = 2) in vec2 aTex;// the color variable has attribute position 
   
 out vec3  Color; // output a color to the fragment shader
 out vec2  Tex; 
+uniform mat4 transform;
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
+    gl_Position = transform*vec4(aPos, 1.0);
     Color = aColor; // set ourColor to the input color we got from the vertex data
     Tex=aTex;
 }   
