@@ -9,6 +9,8 @@
 #include "fstream"
 #include "sstream"
 #include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>     
 
 
 class Shader {
@@ -27,7 +29,9 @@ public:
 	void setBool(const std::string& name, const bool value) const;
 	void setInt(const std::string& name,const int value) const;
 	void setFloat(const std::string& name, const float value) const;
-	void setMat4(const std::string& name, const glm::mat4);
+	void setMat4(const std::string& name, const glm::mat4) const;
+	void setVec3(const std::string& name, const glm::vec3) const;
+	void setVec4(const std::string& name, const glm::vec4) const;
 
 };
 #endif

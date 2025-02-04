@@ -130,19 +130,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main_CH1.cpp" />
+    <ClCompile Include="main_CH2.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="TexImage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="TexImage.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragmentShader.frag" />
-    <None Include="vertexShader.vert" />
+    <None Include="fragmentShader_CH1.frag" />
+    <None Include="fragmentShader_CH2.frag" />
+    <None Include="fragmentShader_CH2_light.frag" />
+    <None Include="vertexShader_CH1.vert" />
+    <None Include="vertexShader_CH2.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
