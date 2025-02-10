@@ -6,7 +6,7 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>  
 #include "Camera.hpp"
-#include "TexImage.hpp"
+#include <assimp\Vertex.h>
 
 float deltaTime = 0.0f;
 float lastX = 400, lastY = 300;  
@@ -113,9 +113,9 @@ int main() {
     glEnableVertexAttribArray(0);
 
      //!SETTING TEXTURE
-    unsigned int diffuse_texture = makeTexture2D("container2.png", GL_RGBA);
-    unsigned int specular_texture = makeTexture2D("container2_specular.png", GL_RGBA);
-    unsigned int emission_texture = makeTexture2D("woodstrip.png", GL_RGBA);
+    unsigned int diffuse_texture = TextureFromFile("img/container2.png");
+    unsigned int specular_texture =TextureFromFile("img/container2_specular.png");
+    unsigned int emission_texture =TextureFromFile("img/woodstrip.png");
 
     // making the shader program
 

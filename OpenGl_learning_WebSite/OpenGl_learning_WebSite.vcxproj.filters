@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,8 +33,14 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TexImage.cpp">
+    <ClCompile Include="mesh.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,15 +53,29 @@
     <ClInclude Include="Camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TexImage.hpp">
+    <ClInclude Include="mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertexShader_CH1.vert" />
-    <None Include="vertexShader_CH2.vert" />
-    <None Include="fragmentShader_CH1.frag" />
-    <None Include="fragmentShader_CH2.frag" />
-    <None Include="fragmentShader_CH2_light.frag" />
+    <None Include="vertexShader_CH2.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShader_CH1.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShader_CH2.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentShader_CH2_light.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vertexShader_CH1.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

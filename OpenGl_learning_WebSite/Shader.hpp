@@ -8,11 +8,12 @@
 #include "iostream"
 #include "fstream"
 #include "sstream"
+#include "stb_image.h"
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>     
 
-
+unsigned int TextureFromFile(const char* filename);
 class Shader {
 
 public :
@@ -22,6 +23,7 @@ public :
 private:
 	unsigned int CompileShader(GLuint type, const std::string& source);
 	std::string ReadFile(GLuint type, const char* FilePath);
+	GLint getUniformLocation(const std::string& name) const;
 public:
 
 	void use();
