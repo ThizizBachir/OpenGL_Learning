@@ -38,7 +38,8 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-
+//!lightning
+glm::vec3 lightDirection = glm::vec3(-1.0, -1.0, -1.0);
 
 int main()
 {
@@ -58,7 +59,7 @@ int main()
    
     //@build and compile shaders
     // -------------------------
-    Shader ourShader("shaders/vertexShader_CH2.vert", "shaders/model_loading.frag");
+    Shader ourShader("shaders/model_loading.vert", "shaders/model_loading.frag");
     Shader GridShader("shaders/EndlessGrid.vert", "shaders/EndlessGrid.frag");
 
     //@load models
@@ -82,7 +83,7 @@ int main()
     //camera.Position = glm::vec3(0.0, 2.0, 0.0);
     //camera.Front = glm::vec3(0.0, -2.0, 0.0);
     //camera.updateCameraVectors();
-
+    int stretchmult = 1;
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -102,7 +103,7 @@ int main()
 
         // render
         // ------
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
@@ -112,9 +113,10 @@ int main()
         ourShader.use();
 
         //// !view/projection transformations
-
         ourShader.setMat4("projection", camera.projection);
         ourShader.setMat4("view", camera.view);
+        ourShader.setVec3("lightDir", lightDirection);
+        ourShader.setVec3("ViewPos", camera.Position);
 
         //// !render the loaded model
         model = glm::mat4(1.0f);
@@ -142,6 +144,7 @@ int main()
         GridShader.setMat4("projection", camera.projection);
         GridShader.setMat4("view", camera.view);
         GridShader.setMat4("model", model);
+        GridShader.setInt("stretchmult", stretchmult);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 
@@ -162,9 +165,13 @@ int main()
         ImGui::Text("frame periode: %d ms", ms);
         ms++;
         ImGui::Text("Frame Rate: %d fps", 1000/ms);
-        ImGui::Text("camera.x: %f fps", camera.Position.x);
-        ImGui::Text("camera.y: %f fps", camera.Position.y);
-        ImGui::Text("camera.z: %f fps", camera.Position.z);
+        ImGui::Text("camera.x: %f ", camera.Position.x);
+        ImGui::Text("camera.y: %f ", camera.Position.y);
+        ImGui::Text("camera.z: %f ", camera.Position.z);
+        ImGui::SliderFloat("Light X", &lightDirection.x, -1.0f, 1.0f);
+        ImGui::SliderFloat("Light Y", &lightDirection.y, -1.0f, 1.0f);
+        ImGui::SliderFloat("Light Z", &lightDirection.z, -1.0f, 1.0f);
+        ImGui::SliderInt("Stretch mult", &stretchmult, 0, 5);
         //ImGui::Text(std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()).c_str());
 
 
@@ -317,6 +324,7 @@ GLFWwindow* make_window(bool Fullsize) {
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
    // draw in wireframe
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);// GL_LINE for wireframe mode and GL_FILL for normal mode

@@ -1,12 +1,18 @@
 #version 460 core
+
 out vec4 FragColor;
 in vec3 WorldPos;
+in vec3 RelativetoCameraPos;
 
 uniform float GridMinPixelBetween=2.0;
 uniform float GridCellSize=0.025;
 uniform vec4 GridColorThick=vec4(0.0,0.0,0.0,1.0);
 uniform vec4 GridColorThin=vec4(0.5,0.5,0.5,1.0);
+uniform vec4 XAxisColor=vec4(1.0,0.0,0.0,1.0);
+uniform vec4 ZAxisColor=vec4(0.0,1.0,0.0,1.0);
 uniform float gGridSize = 100.0;
+uniform int stretchmult=1;
+
 
 
 
@@ -67,16 +73,18 @@ void main()
 
     mod_div_dudv = mod(WorldPos.xz,GridCellSizelod2)/dudv;
     float lod2a=max2(vec2(1.0)-abs(satv(mod_div_dudv) * 2.0 - vec2(1.0)));
-    //float lod0a=max(1.0-mod(WorldPos.x,GridCellSizelod0)/ dudv.x,1.0-mod(WorldPos.z,GridCellSizelod0)/ dudv.y) ;
-    //float lod1a=max(1.0-mod(WorldPos.x,GridCellSizelod1)/ dudv.x,1.0-mod(WorldPos.z,GridCellSizelod1)/ dudv.y) ;
-    //float lod2a=max(1.0-mod(WorldPos.x,GridCellSizelod2)/ dudv.x,1.0-mod(WorldPos.z,GridCellSizelod2)/ dudv.y) ;
+
 
     float LOD_fade=fract(LOD);
 
     vec4 color;
 
+
     if (lod2a >0.0){
+        
         color=GridColorThick;
+        if (abs(WorldPos.x) < 3*l){ color = XAxisColor;}//detecting X axis based on stretching pixels
+        if (abs(WorldPos.z) < 3*l){ color = ZAxisColor;}//detecting Z axis based on stretching pixels
         color.a*=lod2a;
     } else {
         if (lod1a>0.0) {
@@ -88,10 +96,9 @@ void main()
         }
     }
     vec3 POS=WorldPos;
-    if(abs(POS.x)<=0.03){color.x=1.0;color.y=0.0;color.z=0.0;}
-    if(abs(POS.z)<=0.03){color.x=0.0;color.y=1.0;color.z=0.0;}
 
-    float opacity_Fall_OFF=(1.0 -satf(length(WorldPos.xz)/gGridSize));
+
+    float opacity_Fall_OFF=(1.0 -satf(length(RelativetoCameraPos.xz)/gGridSize));
     color.a *= opacity_Fall_OFF;
     
     FragColor = color;

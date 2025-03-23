@@ -141,7 +141,7 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="imgui.ini" />
-    <None Include="shaders\model_loading.vs">
+    <None Include="shaders\model_loading.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\model_loading.frag">

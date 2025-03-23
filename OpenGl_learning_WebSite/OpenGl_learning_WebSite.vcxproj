@@ -173,7 +173,7 @@
     <None Include="shaders\EndlessGrid.frag" />
     <None Include="shaders\fragmentShader_CH2.frag" />
     <None Include="shaders\model_loading.frag" />
-    <None Include="shaders\model_loading.vs" />
+    <None Include="shaders\model_loading.vert" />
     <None Include="shaders\testfrag.frag" />
     <None Include="shaders\EndlessGrid.vert" />
     <None Include="shaders\vertexShader_CH2.vert" />

@@ -3,6 +3,7 @@
 #version 460
 
 out vec3 WorldPos;
+out vec3 RelativetoCameraPos;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -24,6 +25,8 @@ void main()
 {
     int Index = Indices[gl_VertexID];
     vec3 vPos3 = Pos[Index] * gGridSize;
+
+    RelativetoCameraPos=vPos3;
 
     vPos3.x += CameraWorldPos.x;
     vPos3.z += CameraWorldPos.z;
