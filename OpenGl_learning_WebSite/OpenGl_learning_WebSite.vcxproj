@@ -168,15 +168,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />
-    <None Include="fragmentShader_CH2_light.frag" />
     <None Include="packages.config" />
+    <None Include="shaders\CH2_light.frag" />
     <None Include="shaders\EndlessGrid.frag" />
-    <None Include="shaders\fragmentShader_CH2.frag" />
+    <None Include="shaders\CH2.frag" />
     <None Include="shaders\model_loading.frag" />
     <None Include="shaders\model_loading.vert" />
-    <None Include="shaders\testfrag.frag" />
+    <None Include="shaders\Skybox.frag" />
+    <None Include="shaders\Skybox.vert" />
+    <None Include="shaders\test.frag" />
     <None Include="shaders\EndlessGrid.vert" />
-    <None Include="shaders\vertexShader_CH2.vert" />
+    <None Include="shaders\CH2.vert" />
+    <None Include="shaders\test.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
