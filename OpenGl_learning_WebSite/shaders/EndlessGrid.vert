@@ -5,7 +5,6 @@
 out vec3 WorldPos;
 out vec3 RelativetoCameraPos;
 
-uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 CameraWorldPos;
@@ -39,7 +38,7 @@ void main()
 
     vec4 vPos4 = vec4(vPos3, 1.0);
 
-    gl_Position = projection * view * model * vPos4;
+    gl_Position = projection * view * vPos4;
 
     WorldPos = vPos3;
 }
