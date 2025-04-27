@@ -13,11 +13,12 @@ class Window : public Component<Renderer> {
 private: 
     inline static std::unique_ptr<Window> instance = nullptr;
 
-    Window();
+    Window() {} ;
+    friend std::unique_ptr<Window> std::make_unique<Window>();
 
-    ~Window() {};
 
 public:
+    ~Window() {};
 
     static Window* getInstance() {
         if (!instance) {
@@ -30,11 +31,11 @@ public:
     void Init(EventDispatcher * eventSys)
     {
         //this->Renderer_Entities = Renderer_Entities;
-        this->eventSys = eventSys;
+        instance->eventSys = eventSys;
          
         glfwInit();
 
-        glfwWindow = Window::make_window(true);
+        glfwWindow = Window::make_window(false);
 
         if (glfwWindow == nullptr) {
             std::cout << "ERROOR::WINDOW::rendering window can't be made" << std::endl;
@@ -220,7 +221,7 @@ private:
 
     static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 
-        EventDispatcher::getInstance()->Dispatch(std::make_shared<Event_Scroll>(xoffset, yoffset));
+        EventDispatcher::getInstance()->Dispatch(std::make_shared<Event_Scroll>(yoffset));
 
     }
      //int keys[126]= {

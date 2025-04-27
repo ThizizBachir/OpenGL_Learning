@@ -4,6 +4,8 @@
 #include "Component.h"
 #include "Engine.h"
 
+class Engine;
+
 
 /* @Printable keys */
 #define KEY_SPACE              32
@@ -152,6 +154,14 @@
 #define Event_Keyboard_STR      "Event_Keyboard"
 #define Event_UI_Complete_Frame_STR      "Event_UI_Complete_Frame"
 
+enum class EventType {
+	MouseMov,
+	WindowResize,
+	Scroll,
+	Keyboard,
+	UI_Complete_Frame
+
+};
 class EventBase {
 public:
 	virtual ~EventBase() = default;
@@ -161,7 +171,7 @@ public:
 class Event_MouseMov : public EventBase {
 public:
 	Event_MouseMov(double xpos, double ypos, double xoffset, double yoffset) : xpos(xpos), ypos(ypos),xoffset(xoffset),yoffset(yoffset) {}
-	std::string getType() { return "Event_MouseMov"; }
+	std::string getType() const { return "Event_MouseMov"; }
 
 
 	double xpos;
@@ -175,7 +185,7 @@ public:
 class Event_WindowResize : public EventBase {
 public:
 	Event_WindowResize(int width, int height) : width(width), height(height) {};
-	std::string getType() { return "Event_WindowResize"; }
+	std::string getType() const { return "Event_WindowResize"; }
 
 	int width;
 	int height;
@@ -184,7 +194,7 @@ public:
 class Event_Scroll : public EventBase {
 public:
 	Event_Scroll(int yoffset) : yoffset(yoffset){};
-	std::string getType() { return "Event_Scroll"; }
+	std::string getType() const { return "Event_Scroll"; }
 
 	double yoffset;
 };
@@ -193,7 +203,7 @@ class Event_Keyboard :public	EventBase {
 
 public:
 	Event_Keyboard(int Key, int Action) : Key(Key), Action(Action) {};
-	std::string getType() { return "Event_Keyboard"; }
+	std::string getType() const { return "Event_Keyboard"; }
 
 	int Key;
 	int Action;
@@ -203,7 +213,7 @@ public:
 class Event_UI_Complete_Frame : public EventBase {
 public:
 	Event_UI_Complete_Frame() {};
-	std::string getType() { return "Event_UI_Complete_Frame"; }
+	std::string getType() const { return "Event_UI_Complete_Frame"; }
 };
 
 
@@ -214,10 +224,11 @@ class EventDispatcher : public Component<Engine> {
 
 private:
 	inline static std::unique_ptr<EventDispatcher> instance = nullptr;
-	EventDispatcher();
-	~EventDispatcher() {};
+	EventDispatcher() {};
+	friend std::unique_ptr<EventDispatcher> std::make_unique<EventDispatcher>();
 
 public: 
+	~EventDispatcher() {};
 
 	static EventDispatcher* getInstance() {
 		if (!instance)

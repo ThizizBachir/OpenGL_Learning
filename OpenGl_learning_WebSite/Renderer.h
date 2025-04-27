@@ -13,11 +13,11 @@ class Renderer : public Component<Engine>
 private:
 
 	inline static std::unique_ptr<Renderer> instance = nullptr;
-	Renderer();
-	~Renderer() {};
-
+	Renderer() {};
+	friend std::unique_ptr<Renderer> std::make_unique<Renderer>();
 
 public:
+	~Renderer() {};
 
 	static Renderer* getInstance() {
 		if (!instance) {
@@ -30,10 +30,10 @@ public:
 	void Init(EventDispatcher * EvenSys) {
 		//this->Engine_Entities = Engine_entities;
 		this->EvenSys = EvenSys;
-		Renderer_Entities["Window"]         = Window::getInstance();
-		Renderer_Entities["UI"]             = UI::getInstance();
-		Renderer_Entities["Shader_Manager"] = Shader_Manager::getInstance();
-		Renderer_Entities["camera"]         = Camera::getInstance();
+		Renderer_Entities[EntitiesID::Window]         = Window::getInstance();										
+		Renderer_Entities[EntitiesID::UI]             = UI::getInstance();
+		Renderer_Entities[EntitiesID::Shader_Manager] = Shader_Manager::getInstance();
+		Renderer_Entities[EntitiesID::Camera]         = Camera::getInstance();
 
 		getWindow()->Init(EvenSys);
 		getUI()->Init(EvenSys, getWindow()->getGLFWWindow());
@@ -65,7 +65,7 @@ public:
 
 	void Draw() {
 		getShader_M()->Draw();
-		getUI()->Draw();
+//		getUI()->Draw();
 
 	}
 
@@ -77,22 +77,30 @@ public:
 
 
 private:
-	std::unordered_map<std::string, Component<Renderer>*> Renderer_Entities;
+
+	enum class EntitiesID {
+		Window,
+		UI,
+		Shader_Manager,
+		Camera
+	};
+
+	std::unordered_map<EntitiesID, Component<Renderer>*> Renderer_Entities;
 	EventDispatcher * EvenSys;
 
 	Window* getWindow() {
-		return static_cast<Window*>(Renderer_Entities["Window"]);
+		return static_cast<Window*>(Renderer_Entities[EntitiesID::Window]);
 	}
 
 	UI* getUI() {
-		return static_cast<UI*>(Renderer_Entities["UI"]);
+		return static_cast<UI*>(Renderer_Entities[EntitiesID::UI]);
 	}
 	Shader_Manager* getShader_M(){
-		return static_cast<Shader_Manager*>(Renderer_Entities["ShaderManager"]);
+		return static_cast<Shader_Manager*>(Renderer_Entities[EntitiesID::Shader_Manager]);
 	}
 
 	Camera * getCamera() {
-		return static_cast<Camera*>(Renderer_Entities["Camera"]);
+		return static_cast<Camera*>(Renderer_Entities[EntitiesID::Camera]);
 	}
 
 	std::unordered_map<std::string, Component<Engine>*> Engine_Entities;

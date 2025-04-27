@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-int main2() {
+int main() {
 
 	Engine::getInstance()->Init();
 
@@ -8,7 +8,7 @@ int main2() {
 	while (!Engine::getInstance()->Closed())
 
 	{
-
+	   
 		Engine::getInstance()->loop();
 
 	}

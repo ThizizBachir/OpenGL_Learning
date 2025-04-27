@@ -14,9 +14,10 @@ class Shader_Manager : public Component <Renderer> {
 
 private:
 	inline static std::unique_ptr<Shader_Manager> instance = nullptr;
-	Shader_Manager();
-	~Shader_Manager() {};
+	Shader_Manager() {};
+	friend std::unique_ptr<Shader_Manager> std::make_unique<Shader_Manager>();
 public :
+	~Shader_Manager() {};
 
 	 static Shader_Manager* getInstance() {
 		 if (!instance) {
@@ -28,34 +29,36 @@ public :
 
 	 void Init(EventDispatcher* eventSys) {
 
-		 this->eventSys = eventSys;
+		 instance->eventSys = eventSys;
 		 //@build and compile shaders
 		 // -------------------------
-		 Shader LoadingShader("shaders/model_loading.vert", "shaders/model_loading.frag");
-		 Shader GridShader("shaders/EndlessGrid.vert", "shaders/EndlessGrid.frag");
-		 Shader SkyboxShader("shaders/Skybox.vert", "shaders/Skybox.frag");
-		 Shaders[ShaderID::LoadingModel] = LoadingShader;
-		 Shaders[ShaderID::Grid] = GridShader;
-		 Shaders[ShaderID::SkyBox] = SkyboxShader;
+		 Shader   LoadingShader = Shader("shaders/model_loading.vert", "shaders/model_loading.frag");
+		 Shader   GridShader =  Shader("shaders/EndlessGrid.vert", "shaders/EndlessGrid.frag");
+		 Shader  SkyboxShader = Shader("shaders/Skybox.vert", "shaders/Skybox.frag");
+		 instance->Shaders[ShaderID::LoadingModel] = LoadingShader;
+		 instance->Shaders[ShaderID::Grid] = GridShader;
+		 instance->Shaders[ShaderID::SkyBox] = SkyboxShader;
 
 
 		 //@load models
 		 // -----------
-		 Model Backpack("models/backpack/backpack.obj");
+		 //instance->Models.push_back(new Model("models/backpack/backpack.obj"));
 
 
-		 glGenVertexArrays(1, &GridVAO);
+		 glGenVertexArrays(1, &instance->GridVAO);
 
-		 glGenVertexArrays(1, &SkyboxVAO);
+		 glGenVertexArrays(1, &instance->SkyboxVAO);
+
+		 skybox_texture = CubemapsTextureFromFile("img/CubeMap", "Sky2", false);
 
 	 }
 
 	 void Update(float deltaTime,glm::mat4 ViewMatrix,glm::mat4 ProjectionMatrix,glm::vec3 cameraPosition) {
 
-		 this->deltaTime = deltaTime;
-		 this->ViewMatrix = ViewMatrix;
-		 this->ProjectionMatrix = ProjectionMatrix;
-		 this->CamPosition = cameraPosition;
+		 instance->deltaTime = deltaTime;
+		 instance->ViewMatrix = ViewMatrix;
+		 instance->ProjectionMatrix = ProjectionMatrix;
+		 instance->CamPosition = cameraPosition;
 
 	 }
 
@@ -68,10 +71,9 @@ public :
 
 		 for (Model * m: Models)
 		 {
-			 Draw_Model(Shaders[ShaderID::LoadingModel], m);
+			Draw_Model(Shaders[ShaderID::LoadingModel], m);
 		 }
 
-		 int skybox_texture = 1;
 		 Draw_Skybox(Shaders[ShaderID::SkyBox], SkyboxVAO, skybox_texture);
 
 		 Draw_Grid(Shaders[ShaderID::Grid],GridVAO);
@@ -88,14 +90,15 @@ private:
 
 		LoadingModel,
 		SkyBox,
-		Grid
+		Grid,
 
 	};
 	
-	std::unordered_map<ShaderID, Shader> Shaders;
+	std::map<ShaderID, Shader> Shaders;
 	EventDispatcher * eventSys;
 	std::vector<Model*> Models;
 
+	unsigned int skybox_texture;
 	unsigned int GridVAO;
 	unsigned int SkyboxVAO;
 	
@@ -162,4 +165,47 @@ private:
 		model->Draw(LoadingShader);
 	}
 
+	unsigned int CubemapsTextureFromFile(const char* path, const std::string& directory, bool gamma) {
+
+		std::string directoryname = string(path) + "/" + directory;
+
+		std::string faces[6] = { "px","nx","py","ny","pz","nz" };
+
+		unsigned int ID;
+		glGenTextures(1, &ID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		stbi_set_flip_vertically_on_load(false);
+		for (unsigned int i = 0; i < 6; i++) {
+			int width, height, nrComponents;
+			std::string filename = directoryname + '/' + faces[i] + ".png";
+			unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+			if (data) {
+
+				GLenum format;
+				if (nrComponents == 1)
+					format = GL_RED;
+				else if (nrComponents == 3)
+					format = GL_RGB;
+				else if (nrComponents == 4)
+					format = GL_RGBA;
+
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+			}
+			else
+			{
+				std::cout << "Texture failed to load at path: " << filename << std::endl;
+				stbi_image_free(data);
+			}
+
+
+		}
+
+		return ID;
+	}
 };

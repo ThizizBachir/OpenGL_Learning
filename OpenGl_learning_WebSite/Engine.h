@@ -10,13 +10,10 @@ class Engine
 
 private:
 	inline static std::unique_ptr<Engine> instance=nullptr;
-
-	Engine();// singleton constructor
-
-	~Engine() {};
-
-
+	Engine() {};// singleton constructor
+	friend std::unique_ptr<Engine> std::make_unique<Engine>();
 public:
+	~Engine() {};
 
 	static Engine* getInstance() {
 		if (!instance) {
@@ -30,10 +27,10 @@ public:
 	void Init()
 	{
 		auto start = std::chrono::steady_clock::now();
-
+		this->deltaTime = 0;
 		//Engine_Entities["Simulator"] = Simulator.getInstance();
-		Engine_Entities[EngineEntitiesID::Renderer] = Renderer::getInstance();
-		Engine_Entities[EngineEntitiesID::EventSys] = EventDispatcher::getInstance();
+		Engine_Entities[EntitiesID::Renderer] = Renderer::getInstance();
+		Engine_Entities[EntitiesID::EventSys] = EventDispatcher::getInstance();
 		//Simulator.Init();			 
 		getEventsys()->Init();
 		getRenderer()->Init(getEventsys());
@@ -79,23 +76,23 @@ public:
 private:
 	float deltaTime = 0.0f;
 
-	enum class EngineEntitiesID {
+	enum class EntitiesID {
 		Renderer,
 		EventSys,
 		simulator
 	};
 
 	
-	 std::unordered_map<EngineEntitiesID ,Component<Engine>*> Engine_Entities;
+	 std::unordered_map<EntitiesID ,Component<Engine>*> Engine_Entities;
 
 	Renderer * getRenderer(){
 
-		return static_cast<Renderer*>(Engine_Entities[EngineEntitiesID::Renderer]);
+		return static_cast<Renderer*>(Engine_Entities[EntitiesID::Renderer]);
 		
 	}
 
 	EventDispatcher * getEventsys() {
-		return static_cast<EventDispatcher*>(Engine_Entities[EngineEntitiesID::EventSys]);
+		return static_cast<EventDispatcher*>(Engine_Entities[EntitiesID::EventSys]);
 	}
 
 	/*Simulator& getEventsys() {

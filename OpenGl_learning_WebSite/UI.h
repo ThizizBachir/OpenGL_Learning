@@ -13,9 +13,11 @@ class UI : public Component<Renderer>  {//renderer component
 
 private:
 	inline static std::unique_ptr<UI> instance = nullptr;
-	UI();
-	~UI(){};
+    UI() {};
+    friend std::unique_ptr<UI> std::make_unique<UI>();
+
 public:
+	~UI(){};
 
 	static UI* getInstance(){
 		if (!instance) {
@@ -28,7 +30,6 @@ public:
 	void Init(EventDispatcher * eventSys,GLFWwindow * glfwwindow) {
 
         this->eventSys = eventSys;
-
 		ImGuiIO& io = Imgui_Initialize(glfwwindow);//lezemmne5o access el window
 		SetImGuiStyle();
 
@@ -39,21 +40,21 @@ public:
 
         StartFrame();
 
-        //IMGUI window creation
-        ImVec2 topLeftCorner(0.0f, 0.0f); // Position at (0, 0)
-        ImGui::SetNextWindowPos(topLeftCorner, ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(200, 400));
-        ImGui::Begin("GRID TEST", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+        ////IMGUI window creation
+        //ImVec2 topLeftCorner(0.0f, 0.0f); // Position at (0, 0)
+        //ImGui::SetNextWindowPos(topLeftCorner, ImGuiCond_Always);
+        //ImGui::SetNextWindowSize(ImVec2(200, 400));
+        //ImGui::Begin("GRID TEST", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-        ImGui::Text("frame periode: %f ms", ms);
-        ms++;
-        ImGui::Text("Frame Rate: %f fps", 1000 / ms);
-        ImGui::Text("camera.x: %f ", camera.Position.x);
-        ImGui::Text("camera.y: %f ", camera.Position.y);
-        ImGui::Text("camera.z: %f ", camera.Position.z);
-        ImGui::SliderFloat("Light X", &lightDirection.x, -1.0f, 1.0f);
-        ImGui::SliderFloat("Light Y", &lightDirection.y, -1.0f, 1.0f);
-        ImGui::SliderFloat("Light Z", &lightDirection.z, -1.0f, 1.0f);
+        //ImGui::Text("frame periode: %f ms", ms);
+        //ms++;
+        //ImGui::Text("Frame Rate: %f fps", 1000 / ms);
+        //ImGui::Text("camera.x: %f ", camera.Position.x);
+        //ImGui::Text("camera.y: %f ", camera.Position.y);
+        //ImGui::Text("camera.z: %f ", camera.Position.z);
+        //ImGui::SliderFloat("Light X", &lightDirection.x, -1.0f, 1.0f);
+        //ImGui::SliderFloat("Light Y", &lightDirection.y, -1.0f, 1.0f);
+        //ImGui::SliderFloat("Light Z", &lightDirection.z, -1.0f, 1.0f);
 
         CompleteFrame();
 
@@ -66,6 +67,8 @@ public:
     }
 
 private:
+
+
     void StartFrame() {
         //!drawing IMGUI
         //DrawImgui(var);

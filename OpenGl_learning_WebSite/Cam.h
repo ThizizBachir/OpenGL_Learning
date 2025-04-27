@@ -16,9 +16,12 @@
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
 class Camera :public  Component<Renderer> { 
+
 private:
 
     inline static std::unique_ptr<Camera> instance = nullptr;
+
+public:
 
     Camera(glm::vec3 Position = glm::vec3(7.35, 4.95, 6.925), glm::vec3 LookingAt = glm::vec3(0.0))
     {
@@ -37,9 +40,10 @@ private:
 
     }
 
-    ~Camera() {};
+    friend std::unique_ptr<Camera> std::make_unique<Camera>();
 
-public:
+
+    ~Camera() {};
     static Camera* getInstance() {
         if (!instance) {
             instance = std::make_unique<Camera>();
@@ -49,7 +53,8 @@ public:
 
     void Init(EventDispatcher * eventSys) {
 
-        this->eventSys = eventSys;
+        instance->eventSys = eventSys;
+
 
         EventDispatcher::getInstance()->subscribe(Event_WindowResize_STR,
                                                    [this](std::shared_ptr<EventBase> event) {
@@ -66,28 +71,31 @@ public:
                 auto mouseEvent = std::static_pointer_cast<Event_MouseMov>(event);
                 float xoffset = static_cast<float>(mouseEvent->xoffset);
                 float yoffset = static_cast<float>(mouseEvent->yoffset);
-
-                xoffset *= Sensitivity;
-                yoffset *= Sensitivity;
-
-                Yaw += xoffset;
-                Pitch += yoffset;
-
-                // make sure that when pitch is out of bounds, screen doesn't get flipped
-                if (constrainPitch)
+                if (!MouseLocked)
                 {
-                    if (Pitch > 89.0f)
-                        Pitch = 89.0f;
-                    if (Pitch < -89.0f)
-                        Pitch = -89.0f;
+                    
+                    xoffset *= Sensitivity;
+                    yoffset *= Sensitivity;
+
+                    Yaw += xoffset;
+                    Pitch += yoffset;
+
+                    // make sure that when pitch is out of bounds, screen doesn't get flipped
+                    if (constrainPitch)
+                    {
+                        if (Pitch > 89.0f)
+                            Pitch = 89.0f;
+                        if (Pitch < -89.0f)
+                            Pitch = -89.0f;
+                    }
+
+                    // update Front, Right and Up Vectors using the updated Euler angles
+                    update_Camera_Vectors_From_Angles();
+
+                    UpdateViewMatrix();
+
                 }
-
-                // update Front, Right and Up Vectors using the updated Euler angles
-                update_Camera_Vectors_From_Angles();
-
-                UpdateViewMatrix();
-
-                                                                            });
+                                                 });
 
         EventDispatcher::getInstance()->subscribe(Event_Keyboard_STR,
                                                  [this](std::shared_ptr<EventBase>(event)) {
@@ -124,6 +132,10 @@ public:
                     break;
                 case MovementSpeed_minus_Key:
                     MovementSpeed -= MovementSpeed_Sensitivity;
+                    break;
+                case MouseLocking_Key:
+                    MouseLocked=!MouseLocked;
+                    std::cout << "MouseLocked state=" << MouseLocked << std::endl;
                     break;
                 }
             }
@@ -207,6 +219,7 @@ private:
     inline static const int Sensitivity_minus_Key = KEY_J;
     inline static const int MovementSpeed_add_Key = KEY_O;
     inline static const int MovementSpeed_minus_Key = KEY_L;
+    inline static const int MouseLocking_Key = KEY_LEFT_CONTROL;
 
     glm::vec3 Front;
     glm::vec3 Up;
@@ -229,6 +242,8 @@ private:
     bool constrainPitch =true;
 
     float deltaTime = 0.0f;
+
+    bool MouseLocked=false;
 
     //Matrix
     glm::mat4 view, projection;
