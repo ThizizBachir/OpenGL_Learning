@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Cam.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="Cloth.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EventSys.h" />

@@ -149,6 +149,9 @@
     <ClInclude Include="Cam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Cloth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

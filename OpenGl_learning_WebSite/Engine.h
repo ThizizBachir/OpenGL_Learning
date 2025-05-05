@@ -26,17 +26,20 @@ public:
 
 	void Init()
 	{
-		auto start = std::chrono::steady_clock::now();
+		//auto start = std::chrono::steady_clock::now();
+		auto start = std::chrono::high_resolution_clock::now();
 		this->deltaTime = 0;
-		//Engine_Entities["Simulator"] = Simulator.getInstance();
+		Engine_Entities[EntitiesID::simulator] = Simulator::getInstance();
 		Engine_Entities[EntitiesID::Renderer] = Renderer::getInstance();
 		Engine_Entities[EntitiesID::EventSys] = EventDispatcher::getInstance();
-		//Simulator.Init();			 
 		getEventsys()->Init();
+		getSimulator()->Init(getEventsys());			 
 		getRenderer()->Init(getEventsys());
 
-		auto end = std::chrono::steady_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		//auto end = std::chrono::steady_clock::now();
+		auto end = std::chrono::high_resolution_clock::now();
+		//auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 		std::cout << "Time taken for Initialisation: " << duration.count() << " milliseconds" << std::endl;
 
 	}
@@ -64,6 +67,7 @@ public:
 
 		getRenderer()->Shutdown();
 		getEventsys()->Shutdown();
+		getSimulator()->Shutdown();
 		
 
 	}
@@ -95,9 +99,9 @@ private:
 		return static_cast<EventDispatcher*>(Engine_Entities[EntitiesID::EventSys]);
 	}
 
-	/*Simulator& getEventsys() {
-		return *static_cast<Simulator*>(Engine_Entities["Simulator"]);
-	}*/
+	Simulator * getSimulator() {
+		return static_cast<Simulator*>(Engine_Entities[EntitiesID::simulator]);
+	}
 
 private:
 
@@ -108,7 +112,7 @@ private:
 	};
 
 	void Update(float deltaTime) {
-		//getSimulator().Update(deltaTime);
+		getSimulator()->Update(deltaTime);
 		getRenderer()->Update(deltaTime);
 	};
 

@@ -100,7 +100,8 @@
 //
 //        //@starting time calculation
 //        //--------------------
-//        auto start = std::chrono::steady_clock::now();
+//        //auto start = std::chrono::steady_clock::now();
+//        auto start = std::chrono::high_resolution_clock::now();
 //        float currentFrame = static_cast<float>(glfwGetTime());
 //        deltaTime = currentFrame - lastFrame;
 //        lastFrame = currentFrame;
@@ -198,10 +199,10 @@
 //        ImGui::SetNextWindowSize(ImVec2(200, 400));
 //        ImGui::Begin("GRID TEST", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 //
-//        auto end = std::chrono::steady_clock::now();
-//        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+//        auto end = std::chrono::high_resolution_clock::now();
+//        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 //        float ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-//        std::cout << "Time taken in frame: " << duration.count() << " milliseconds" << std::endl;
+//        std::cout << "Time taken in frame: " << duration.count() << " microseconds" << std::endl;
 //
 //
 //        ImGui::Text("frame periode: %f ms", duration);

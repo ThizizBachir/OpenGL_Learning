@@ -40,15 +40,14 @@ public:
 
         StartFrame();
 
-        ////IMGUI window creation
-        //ImVec2 topLeftCorner(0.0f, 0.0f); // Position at (0, 0)
-        //ImGui::SetNextWindowPos(topLeftCorner, ImGuiCond_Always);
-        //ImGui::SetNextWindowSize(ImVec2(200, 400));
-        //ImGui::Begin("GRID TEST", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+        //IMGUI window creation
+        ImVec2 topLeftCorner(0.0f, 0.0f); // Position at (0, 0)
+        ImGui::SetNextWindowPos(topLeftCorner, ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(200, 400));
+        ImGui::Begin("GRID TEST", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-        //ImGui::Text("frame periode: %f ms", ms);
-        //ms++;
-        //ImGui::Text("Frame Rate: %f fps", 1000 / ms);
+        ImGui::Text("frame periode:  ms");
+        ImGui::Text("Frame Rate: fps", 1000 );
         //ImGui::Text("camera.x: %f ", camera.Position.x);
         //ImGui::Text("camera.y: %f ", camera.Position.y);
         //ImGui::Text("camera.z: %f ", camera.Position.z);

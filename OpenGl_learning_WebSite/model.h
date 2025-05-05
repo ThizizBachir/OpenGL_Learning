@@ -209,6 +209,8 @@ unsigned int TextureFromFile(const char *path, const string &directory, bool gam
     string filename = string(path);
     filename = directory + '/' + filename;
 
+    //stbi_set_flip_vertically_on_load(true);
+
     unsigned int textureID;
     glGenTextures(1, &textureID);
 

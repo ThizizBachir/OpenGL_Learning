@@ -74,7 +74,7 @@ public:
                 if (!MouseLocked)
                 {
                     
-                    xoffset *= Sensitivity;
+                    xoffset *= -Sensitivity;
                     yoffset *= Sensitivity;
 
                     Yaw += xoffset;
@@ -121,6 +121,12 @@ public:
                 case Left_Key:
                     Position -= Right * velocity;
                     break;
+                case Up_Key:
+                    Position += Up * velocity;
+                    break;
+                case Down_Key:
+                    Position -= Up * velocity;
+                    break;
                 case Sensitivity_add_Key:
                     Sensitivity += Sensitivity_Sensitivity;
                     break;
@@ -133,10 +139,18 @@ public:
                 case MovementSpeed_minus_Key:
                     MovementSpeed -= MovementSpeed_Sensitivity;
                     break;
-                case MouseLocking_Key:
-                    MouseLocked=!MouseLocked;
-                    std::cout << "MouseLocked state=" << MouseLocked << std::endl;
-                    break;
+                }
+            }
+            //lezem n7assen fi he4i
+            if (key == MouseLocking_Key) {
+                if (action) {
+                    if (!ctrlPressed) {
+                        ctrlPressed = true;
+                        MouseLocked = !MouseLocked;
+                    }
+                }
+                else {
+                    ctrlPressed = false;
                 }
             }
             
@@ -161,7 +175,7 @@ public:
     }
 
     void Update(float deltaTime) {
-        deltaTime = deltaTime;
+        this->deltaTime = deltaTime;
     }
 
     // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -215,6 +229,8 @@ private:
     inline static const int Backward_Key = KEY_S;
     inline static const int Left_Key = KEY_A;
     inline static const int Right_Key = KEY_D;
+    inline static const int Up_Key = KEY_Q;
+    inline static const int Down_Key = KEY_E;
     inline static const int Sensitivity_add_Key = KEY_U;
     inline static const int Sensitivity_minus_Key = KEY_J;
     inline static const int MovementSpeed_add_Key = KEY_O;
@@ -243,7 +259,8 @@ private:
 
     float deltaTime = 0.0f;
 
-    bool MouseLocked=false;
+    bool MouseLocked=true;
+    bool ctrlPressed = false;
 
     //Matrix
     glm::mat4 view, projection;

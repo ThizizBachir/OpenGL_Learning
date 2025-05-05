@@ -60,6 +60,26 @@ public:
                 glfwSwapBuffers(glfwWindow);
                 glfwPollEvents();
                                                     });
+        EventDispatcher::getInstance()->subscribe(Event_Keyboard_STR,
+            [this](std::shared_ptr<EventBase>(event)) {
+
+                auto keyboardEvent = static_pointer_cast<Event_Keyboard>(event);
+                int key = keyboardEvent->Key;
+                int action = keyboardEvent->Action;
+
+                if (key == MouseLocking_Key) {
+                    if (action) {
+                        if (!ctrlPressed) {
+                            ctrlPressed = true;
+                            MouseLocked = !MouseLocked;
+                            glfwSetInputMode(glfwWindow, GLFW_CURSOR, MouseLocked ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+                        }
+                    }
+                    else {
+                        ctrlPressed = false;
+                    }
+                }
+            });
     
 
 	}
@@ -100,6 +120,10 @@ private:
 
     inline static double LastXpos = Width / 2;
     inline static double LastYpos = Height / 2;
+
+    inline static const int MouseLocking_Key = KEY_LEFT_CONTROL;
+    bool MouseLocked = true;
+    bool ctrlPressed = false;
 
 
      GLFWwindow* make_window(bool Fullsize) {
@@ -188,8 +212,7 @@ private:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // draw in wireframe
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);// GL_LINE for wireframe mode and GL_FILL for normal mode
@@ -199,13 +222,13 @@ private:
 
 
     }
+
      static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     {
         // make sure the viewport matches the new window dimensions; note that width and 
         // height will be significantly larger than specified on retina displays.
         EventDispatcher::getInstance()->Dispatch(std::make_shared<Event_WindowResize>(width, height));
     }
-
 
      static void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
@@ -224,16 +247,8 @@ private:
         EventDispatcher::getInstance()->Dispatch(std::make_shared<Event_Scroll>(yoffset));
 
     }
-     //int keys[126]= {
-     //   0, 1, 2, 3, 4, 5, 6, 7, 32, 39, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 59, 61,
-     //   65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
-     //   89, 90, 91, 92, 93, 96, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269,
-     //   280, 281, 282, 283, 284, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303,
-     //   304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 320, 321, 322, 323, 324, 325, 326, 327,
-     //   328, 329, 330, 331, 332, 333, 334, 335, 336, 340, 341, 342, 343, 344, 345, 346, 347, 348
-     //};
 
-     int keys[126]{
+     inline static int keys[126]{
 
         KEY_SPACE, KEY_APOSTROPHE, KEY_COMMA, KEY_MINUS, KEY_PERIOD, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_SEMICOLON, KEY_EQUAL, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M,KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, KEY_LEFT_BRACKET, KEY_BACKSLASH, KEY_RIGHT_BRACKET, KEY_GRAVE_ACCENT, KEY_ESCAPE, KEY_ENTER, KEY_TAB, KEY_BACKSPACE, KEY_INSERT, KEY_DELETE, KEY_RIGHT, KEY_LEFT, KEY_DOWN, KEY_UP, KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_HOME, KEY_END, KEY_CAPS_LOCK, KEY_SCROLL_LOCK, KEY_NUM_LOCK, KEY_PRINT_SCREEN, KEY_PAUSE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, KEY_F13, KEY_F14, KEY_F15, KEY_F16, KEY_F17, KEY_F18, KEY_F19, KEY_F20, KEY_F21, KEY_F22, KEY_F23, KEY_F24, KEY_F25, KEY_KP_0, KEY_KP_1, KEY_KP_2, KEY_KP_3, KEY_KP_4, KEY_KP_5, KEY_KP_6, KEY_KP_7, KEY_KP_8, KEY_KP_9, KEY_KP_DECIMAL, KEY_KP_DIVIDE, KEY_KP_MULTIPLY, KEY_KP_SUBTRACT, KEY_KP_ADD, KEY_KP_ENTER, KEY_KP_EQUAL, KEY_LEFT_SHIFT, KEY_LEFT_CONTROL, KEY_LEFT_ALT, KEY_LEFT_SUPER, KEY_RIGHT_SHIFT, KEY_RIGHT_CONTROL, KEY_RIGHT_ALT, KEY_RIGHT_SUPER, KEY_MENU, MOUSE_BUTTON_1, MOUSE_BUTTON_2, MOUSE_BUTTON_3, MOUSE_BUTTON_4, MOUSE_BUTTON_5, MOUSE_BUTTON_6, MOUSE_BUTTON_7, MOUSE_BUTTON_8   
                    
@@ -241,7 +256,8 @@ private:
 
     static void process_input(GLFWwindow* window) {
 
-        for (int i = 0; i < sizeof(keys) / sizeof(int); i++) {
+        for (int i :keys) {
+
 
             if (glfwGetKey(window, i) == KEY_RELEASE) {
 

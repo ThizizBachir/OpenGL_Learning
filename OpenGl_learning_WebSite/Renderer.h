@@ -65,7 +65,7 @@ public:
 
 	void Draw() {
 		getShader_M()->Draw();
-//		getUI()->Draw();
+		getUI()->Draw();
 
 	}
 

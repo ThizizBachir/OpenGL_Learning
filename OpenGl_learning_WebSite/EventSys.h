@@ -154,6 +154,7 @@ class Engine;
 #define Event_Keyboard_STR      "Event_Keyboard"
 #define Event_UI_Complete_Frame_STR      "Event_UI_Complete_Frame"
 
+
 enum class EventType {
 	MouseMov,
 	WindowResize,
@@ -214,6 +215,15 @@ class Event_UI_Complete_Frame : public EventBase {
 public:
 	Event_UI_Complete_Frame() {};
 	std::string getType() const { return "Event_UI_Complete_Frame"; }
+};
+
+class Event_Message : public EventBase {
+public :
+	Event_Message() {};
+	std::string getType() const { return "Event_Message"; }
+
+	std::string message;
+
 };
 
 

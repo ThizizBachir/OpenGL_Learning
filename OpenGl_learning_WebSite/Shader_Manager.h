@@ -42,7 +42,8 @@ public :
 
 		 //@load models
 		 // -----------
-		 //instance->Models.push_back(new Model("models/backpack/backpack.obj"));
+		 stbi_set_flip_vertically_on_load(true);
+		 Models.push_back(new Model("models/backpack/backpack.obj"));
 
 
 		 glGenVertexArrays(1, &instance->GridVAO);
@@ -55,10 +56,10 @@ public :
 
 	 void Update(float deltaTime,glm::mat4 ViewMatrix,glm::mat4 ProjectionMatrix,glm::vec3 cameraPosition) {
 
-		 instance->deltaTime = deltaTime;
-		 instance->ViewMatrix = ViewMatrix;
-		 instance->ProjectionMatrix = ProjectionMatrix;
-		 instance->CamPosition = cameraPosition;
+		 this->deltaTime = deltaTime;
+		 this->ViewMatrix = ViewMatrix;
+		 this->ProjectionMatrix = ProjectionMatrix;
+		 this->CamPosition = cameraPosition;
 
 	 }
 
